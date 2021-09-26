@@ -1,0 +1,48 @@
+#Version docker engine
+version: '3.1'
+#Each service defined in docker-compose.yml must specify exactly one of image or build
+services:
+    #Name of services is php
+    php:
+        #build docker image from dockerfile
+        build:
+        #Identify path contains dockerfile. 
+        #Its a path to the dicrectory that contain Dockerfile file. It purposes to build a new image for the service. More easy
+            context: .
+            dockerfile: Dockerfile
+        #Setup port for container    
+        ports:
+        #Mapping port local to port container 
+            - 80:80
+        #Bind mount volumes (storage data for container)   
+        volumes:
+        #src is name of volumes./var/www/html/ is volume
+            - ./src:/var/www/html/
+        
+    #name of services is php        
+    db:
+        #Declare name of iamge is mysql
+        image: mysql
+        #Execute simple password setting for user in mysql
+        command: --default-authentication-plugin=mysql_native_password
+        #restart policy
+        restart: always
+        #Add avariable environment. It will connect container
+        environment:
+        #password to login DB
+            MYSQL_ROOT_PASSWORD: example
+    #Name of services Adminer. Adminer provide GUI combine mysql
+    adminer:
+        #Declare name of image is mysql
+        image: adminer
+        #Restart is applied when starting a service using docker-compose up
+        #Always restart the container if it stops. 
+        #If it is manually stopped, it is restarted only when Docker daemon restarts or the container itself is manually restarted
+        restart: always
+        #setup port for container
+        ports:
+        #Mapping port local to port container
+            - 8080:8080
+#storage data. same level with service            
+volumes:
+  mysql-data:
